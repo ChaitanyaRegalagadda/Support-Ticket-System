@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Confirmed Ticket</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",sans-serif;}
+body{
+  background:linear-gradient(to right,#0f2027,#203a43,#2c5364);
+  color:white;display:flex;justify-content:center;align-items:flex-start;
+  min-height:100vh;padding:30px;
+}
+.card{
+  background:#1e1e1e;width:460px;border-radius:14px;
+  padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+h2{text-align:center;color:#4fc3f7;margin-bottom:10px;}
+.ticket-info, .passenger-section{
+  background:#2a2a2a;padding:12px;border-radius:10px;margin-top:15px;
+}
+.ticket-info p, .passenger-card p{
+  margin:4px 0;font-size:15px;
+}
+.passenger-section h4{color:#4fc3f7;margin-bottom:8px;}
+.passenger-card{
+  background:#333;padding:10px;border-radius:8px;margin-bottom:10px;
+}
+footer{
+  text-align:center;margin-top:20px;
+}
+button{
+  padding:10px 20px;border:none;border-radius:8px;
+  background:#4caf50;color:white;font-size:15px;cursor:pointer;
+}
+button:hover{background:#3b8d3b;}
+hr{border:0;border-top:1px solid #444;margin:10px 0;}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2>🎟️ Confirmed Ticket</h2>
+  <div id="ticketInfo" class="ticket-info"></div>
+
+  <div class="passenger-section">
+    <h4>👥 Passenger Details</h4>
+    <div id="passengerList"></div>
+  </div>
+
+  <footer>
+    <button onclick="goHome()">🏠 Back to Dashboard</button>
+  </footer>
+</div>
+
+<script>
+const booking = JSON.parse(localStorage.getItem("bookingDetails"));
+if(!booking){
+  alert("No booking found. Please book your ticket first!");
+  window.location.href = "book ticket.html";
+}
+
+const t = booking.train;
+const berthTypes = ["Lower", "Middle", "Upper", "Side Lower", "Side Upper"];
+const randomBerth = berthTypes[Math.floor(Math.random()*berthTypes.length)];
+const seatNo = Math.floor(10 + Math.random() * 90);
+
+document.getElementById("ticketInfo").innerHTML = `
+  <p><strong>PNR:</strong> ${booking.pnr}</p>
+  <p><strong>Train:</strong> ${t.name} (${t.no})</p>
+  <p><strong>Route:</strong> ${t.from} ➜ ${t.to}</p>
+  <p><strong>Departure:</strong> ${formatTime(t.depart)} | Arrival: ${formatTime(t.arrive)}</p>
+  <p><strong>Date:</strong> ${booking.date}</p>
+`;
+
+const passengerList = document.getElementById("passengerList");
+const passengerDiv = document.createElement("div");
+passengerDiv.className = "passenger-card";
+passengerDiv.innerHTML = `
+  <p><strong>Name:</strong> ${booking.passengerName}</p>
+  <p>Age: ${booking.age} | Gender: ${booking.gender}</p>
+  <p>Berth Preference: ${booking.berth}</p>
+  <hr>
+  <p><strong>Allotted Berth:</strong> ${randomBerth}</p>
+  <p><strong>Seat No:</strong> ${seatNo}</p>
+`;
+passengerList.appendChild(passengerDiv);
+
+function goHome(){
+  localStorage.removeItem("bookingDetails");
+  localStorage.removeItem("selectedTrain");
+  window.location.href = "dashboard.html";
+}
+
+function formatTime(t){
+  let [h,m] = t.split(":").map(Number);
+  const ampm = h >= 12 ? "PM" : "AM";
+  h = h % 12 || 12;
+  return `${h}:${m.toString().padStart(2,"0")} ${ampm}`;
+}
+</script>
+</body>
+</html>

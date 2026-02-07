@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Available Trains | Railway Support Ticket System</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",sans-serif;}
+body{
+  background:#121212;color:white;display:flex;justify-content:center;
+  align-items:flex-start;min-height:100vh;padding-top:20px;
+}
+.card{
+  background:#1e1e1e;width:440px;border-radius:12px;padding:15px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);overflow-y:auto;max-height:90vh;
+}
+.header{display:flex;align-items:center;gap:10px;margin-bottom:15px;}
+.header h2{flex:1;text-align:center;font-size:18px;}
+.back{background:none;border:none;color:#4CAF50;font-size:20px;cursor:pointer;}
+.route-box{
+  background:#2a2a2a;border-radius:10px;padding:10px;margin-bottom:10px;
+  text-align:center;font-size:15px;
+}
+.train-item{
+  background:#2a2a2a;border-radius:10px;padding:12px;margin-bottom:12px;
+  cursor:pointer;transition:0.2s;
+}
+.train-item:hover{background:#333;}
+.train-header{
+  display:flex;align-items:center;justify-content:space-between;
+}
+.train-header span.code{
+  background:#4a6fa5;padding:3px 6px;border-radius:6px;font-weight:bold;
+}
+.train-header span.time{font-weight:600;}
+.train-name{margin-top:6px;font-size:14px;font-weight:500;}
+.duration{font-size:12px;color:#bbb;margin-top:2px;}
+.status{font-size:13px;margin-top:5px;}
+.status.daily{color:#4CAF50;}
+.status.notrun{color:#f44336;}
+button.book{
+  margin-top:8px;width:100%;background:#4CAF50;color:white;border:none;
+  border-radius:8px;padding:8px;cursor:pointer;font-size:14px;
+}
+button.book:hover{background:#388E3C;}
+.no-train{
+  text-align:center;margin-top:20px;color:#f44336;font-weight:600;
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <button class="back" onclick="goBack()">←</button>
+    <h2>Available Trains</h2>
+  </div>
+  <div id="routeBox" class="route-box"></div>
+  <div id="trainList"></div>
+</div>
+
+<script>
+// Go back to search page
+function goBack(){ window.location.href="search train.html"; }
+
+// Get data from localStorage
+const searchData = JSON.parse(localStorage.getItem("searchData"));
+const listDiv = document.getElementById("trainList");
+const routeBox = document.getElementById("routeBox");
+
+if(!searchData){
+  alert("⚠️ No search results found. Please search again.");
+  window.location.href="search train.html";
+}
+
+// Display route info
+routeBox.innerHTML = `
+  <b>${searchData.from.name} (${searchData.from.code})</b><br>⬇️<br>
+  <b>${searchData.to.name} (${searchData.to.code})</b><br>
+  <small>🗓️ ${searchData.date}</small>
+`;
+
+// Simulated list of trains (you can filter by route later)
+const allTrains = [
+  {no:"12760",name:"Charminar Express",from:searchData.from.code,to:searchData.to.code,depart:"06:00",arrive:"12:00"},
+  {no:"17233",name:"Bhagyanagar Express",from:searchData.from.code,to:searchData.to.code,depart:"07:30",arrive:"14:15"},
+  {no:"12805",name:"Janmabhoomi Express",from:searchData.from.code,to:searchData.to.code,depart:"09:00",arrive:"16:00"},
+  {no:"12785",name:"Kacheguda SF Express",from:searchData.from.code,to:searchData.to.code,depart:"12:00",arrive:"19:00"},
+  {no:"17201",name:"Golconda Express",from:searchData.from.code,to:searchData.to.code,depart:"15:00",arrive:"22:00"},
+  {no:"12793",name:"Rayalaseema Express",from:searchData.from.code,to:searchData.to.code,depart:"18:30",arrive:"01:00"}
+];
+
+// Show trains
+if(allTrains.length === 0){
+  listDiv.innerHTML = `<div class="no-train">❌ No trains found for this route.</div>`;
+} else {
+  allTrains.forEach(train=>{
+    const div = document.createElement("div");
+    div.className = "train-item";
+    div.innerHTML = `
+      <div class="train-header">
+        <span class="code">${train.no}</span>
+        <span class="time">${formatTime(train.depart)} — ${getDuration(train.depart,train.arrive)} — ${formatTime(train.arrive)}</span>
+      </div>
+      <div class="train-name">${train.name}</div>
+      <div class="duration">${train.from} ➜ ${train.to}</div>
+      <div class="status daily">Runs Daily</div>
+      <button class="book" onclick='bookTicket(${JSON.stringify(train)})'>Book Ticket</button>
+    `;
+    listDiv.appendChild(div);
+  });
+}
+
+// Helpers
+function formatTime(t){
+  let [h,m] = t.split(":").map(Number);
+  const ampm = h >= 12 ? "PM" : "AM";
+  h = h % 12 || 12;
+  return `${h}:${m.toString().padStart(2,"0")} ${ampm}`;
+}
+
+function getDuration(start, end){
+  const [sh,sm] = start.split(":").map(Number);
+  const [eh,em] = end.split(":").map(Number);
+  let diff = (eh*60+em)-(sh*60+sm);
+  if(diff<0) diff += 24*60;
+  const h=Math.floor(diff/60), m=diff%60;
+  return `${h}h ${m.toString().padStart(2,"0")}m`;
+}
+
+// On Book Ticket click
+function bookTicket(train){
+  localStorage.setItem("selectedTrain", JSON.stringify(train));
+  window.location.href = "book-ticket.html";
+
+}
+</script>
+</body>
+</html>

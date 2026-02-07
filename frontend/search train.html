@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Search Trains | Railway Support Ticket System</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",sans-serif;}
+body{
+  background:linear-gradient(to right,#0f2027,#203a43,#2c5364);
+  display:flex;justify-content:center;align-items:center;height:100vh;color:white;
+}
+.card{
+  width:440px;background:#1e1e1e;padding:25px;border-radius:15px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+h2{text-align:center;margin-bottom:20px;color:#4fc3f7;}
+label{display:block;margin-top:10px;font-size:15px;}
+select,input[type="date"],input[type="time"]{
+  width:100%;padding:10px;margin-top:5px;border-radius:8px;border:none;
+  background:#2a2a2a;color:white;font-size:15px;
+}
+button{
+  width:100%;margin-top:20px;padding:12px;border:none;border-radius:8px;
+  background:#4caf50;color:white;font-size:16px;cursor:pointer;
+}
+button:hover{background:#3b8d3b;}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2>🚆 Search Train</h2>
+
+  <label>From Station</label>
+  <select id="fromStation"><option value="">-- Select From --</option></select>
+
+  <label>To Station</label>
+  <select id="toStation"><option value="">-- Select To --</option></select>
+
+  <label>Journey Date</label>
+  <input type="date" id="date">
+
+  <label>Preferred Departure Time</label>
+  <input type="time" id="time">
+
+  <button onclick="findTrains()">🔍 Search Trains</button>
+</div>
+
+<script>
+// === Station List ===
+const stations = [
+  {name:"Vijayawada Junction",code:"BZA"},
+  {name:"Hyderabad",code:"HYB"},
+  {name:"Secunderabad",code:"SC"},
+  {name:"Chennai Central",code:"MAS"},
+  {name:"Bangalore",code:"SBC"},
+  {name:"Visakhapatnam",code:"VSKP"},
+  {name:"Mumbai Central",code:"BCT"}
+];
+
+const fromSelect=document.getElementById("fromStation");
+const toSelect=document.getElementById("toStation");
+
+stations.forEach(st=>{
+  const opt=document.createElement("option");
+  opt.value=st.code;
+  opt.textContent=`${st.name} (${st.code})`;
+  fromSelect.appendChild(opt);
+
+  const opt2=opt.cloneNode(true);
+  toSelect.appendChild(opt2);
+});
+
+// === Train Database (same as train list page) ===
+const trains=[
+  {no:"12759",name:"Charminar SF Express",from:"BZA",to:"HYB",depart:"01:10",arrive:"08:10"},
+  {no:"07166",name:"Hyderabad Special Fare",from:"BZA",to:"HYB",depart:"14:10",arrive:"22:00"},
+  {no:"12727",name:"Godavari SF Express",from:"BZA",to:"HYB",depart:"23:30",arrive:"06:15"},
+  {no:"17015",name:"Visakha Express",from:"BZA",to:"SC",depart:"00:10",arrive:"07:45"},
+  {no:"07060",name:"Secunderabad Special",from:"BZA",to:"SC",depart:"00:30",arrive:"08:40"},
+  {no:"12610",name:"Chennai Express",from:"BZA",to:"MAS",depart:"10:00",arrive:"18:00"},
+  {no:"12839",name:"Howrah Express",from:"VSKP",to:"BCT",depart:"11:20",arrive:"08:10"}
+];
+
+// === Convert time to minutes for comparison ===
+function toMinutes(time){
+  const [h,m]=time.split(":").map(Number);
+  return h*60+m;
+}
+
+// === Search Button Function ===
+function findTrains(){
+  const fromVal=fromSelect.value;
+  const toVal=toSelect.value;
+  const date=document.getElementById("date").value;
+  const prefTime=document.getElementById("time").value;
+
+  if(!fromVal||!toVal||!date){
+    alert("⚠️ Please fill all fields!");
+    return;
+  }
+  if(fromVal===toVal){
+    alert("⚠️ From and To stations cannot be same!");
+    return;
+  }
+
+  // Filter trains based on route & time
+  let filtered=trains.filter(t=>t.from===fromVal && t.to===toVal);
+  if(prefTime) filtered=filtered.filter(t=>toMinutes(t.depart)>=toMinutes(prefTime));
+
+  if(filtered.length===0){
+    alert("❌ No trains available for this route or time.");
+    return;
+  }
+
+  // Save search data & filtered results
+  const searchData={from:stations.find(s=>s.code===fromVal),to:stations.find(s=>s.code===toVal),date,trains:filtered};
+  localStorage.setItem("searchData",JSON.stringify(searchData));
+
+  // Redirect to train list page
+  window.location.href="train list.html";
+}
+</script>
+</body>
+</html>

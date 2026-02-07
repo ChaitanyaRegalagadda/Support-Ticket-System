@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login | Railway Support Ticket System</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",sans-serif;}
+html,body{height:100%;}
+body{
+  background:linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url("train bd.jpg") no-repeat center/cover;
+  display:flex;justify-content:flex-start;align-items:center;
+}
+.left-container{margin-left:80px;}
+.login-card{
+  width:380px;height:520px;background:rgba(255,255,255,0.25);
+  backdrop-filter:blur(15px);border-radius:18px;
+  box-shadow:0 15px 40px rgba(0,0,0,0.35);
+  padding:30px;color:white;display:flex;flex-direction:column;
+  justify-content:space-between;text-align:center;
+}
+.login-card h2{margin-bottom:8px;}
+.login-card p{font-size:14px;opacity:0.9;}
+.form{display:flex;flex-direction:column;align-items:center;}
+.input-box{position:relative;width:100%;max-width:280px;margin-bottom:15px;}
+.input-box input{
+  width:100%;padding:12px 42px;border:none;border-radius:8px;
+  outline:none;text-align:center;
+}
+.input-box span{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#444;
+}
+button{
+  width:100%;max-width:280px;padding:12px;background:#5c8ea5;
+  border:none;border-radius:8px;color:white;font-size:16px;cursor:pointer;
+}
+button:hover{background:#497a90;}
+.links{
+  width:100%;max-width:280px;display:flex;justify-content:space-between;
+  font-size:13px;margin-top:12px;
+}
+.links a{color:white;text-decoration:none;opacity:0.85;}
+</style>
+</head>
+
+<body>
+<div class="left-container">
+  <div class="login-card">
+    <div>
+      <h2>Login</h2>
+      <p>Railway Support Ticket System</p>
+    </div>
+
+    <div class="form">
+      <div class="input-box">
+        <input type="email" id="email" placeholder="Enter Email" required>
+        <span class="material-icons">person</span>
+      </div>
+
+      <div class="input-box">
+        <input type="password" id="password" placeholder="Password" required>
+        <span class="material-icons">lock</span>
+      </div>
+
+      <button onclick="login()">Login</button>
+
+      <div class="links">
+        <a href="#">Forgot password?</a>
+        <a href="signup.html">Sign up</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function login(){
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  // Fetch user from localStorage
+  const user = JSON.parse(localStorage.getItem("user_" + email));
+
+  if(user && user.password === password){
+    localStorage.setItem("loggedInUser", JSON.stringify(user));
+    alert("✅ Login Successful! Welcome " + user.name);
+    window.location.href = "dashboard.html";
+  } else if(user){
+    alert("❌ Incorrect password!");
+  } else {
+    alert("⚠️ User not found! Please sign up first.");
+    window.location.href = "signup.html";
+  }
+}
+</script>
+</body>
+</html>

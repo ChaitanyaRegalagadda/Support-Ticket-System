@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard | Railway Support Ticket System</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Segoe UI", sans-serif;
+}
+
+body{
+  background:#f4f6f9;
+}
+
+/* HEADER */
+.header{
+  background:linear-gradient(to right, #1e3c72, #2a5298);
+  color:white;
+  padding:20px 30px;
+  font-size:22px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logout{
+  background:#ff6b6b;
+  padding:8px 15px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:14px;
+  border:none;
+  color:white;
+}
+
+.logout:hover{
+  background:#d94b4b;
+}
+
+/* DASHBOARD */
+.dashboard{
+  display:flex;
+  justify-content:center;
+  gap:30px;
+  margin-top:80px;
+  flex-wrap:wrap;
+}
+
+/* CARD */
+.card{
+  width:260px;
+  height:170px;
+  background:white;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.card:hover{
+  transform:translateY(-10px);
+}
+
+/* CARD TEXT */
+.card h3{
+  margin-bottom:10px;
+  color:#1e3c72;
+}
+
+.card p{
+  font-size:14px;
+  color:#555;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div>🚆 Railway Support Ticket System</div>
+  <button class="logout" onclick="logout()">Logout</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard">
+
+  <div class="card" onclick="bookTicket()">
+    <h3>🚆 Book Ticket</h3>
+    <p>Search & book train tickets</p>
+  </div>
+
+  <div class="card" onclick="raiseTicket()">
+    <h3>🎫 Raise Complaint</h3>
+    <p>Report railway issues</p>
+  </div>
+
+  <div class="card" onclick="viewTickets()">
+    <h3>📋 My Complaints</h3>
+    <p>Track complaint status</p>
+  </div>
+
+</div>
+
+<script>
+// Load logged-in user (redirect if not found)
+const user = JSON.parse(localStorage.getItem("loggedInUser"));
+if(!user){
+  alert("Session expired! Please log in again.");
+  window.location.href = "login.html";
+}
+
+// === NAVIGATION FUNCTIONS ===
+function bookTicket(){
+  window.location.href = "search train.html";  // Start train booking process
+}
+
+function raiseTicket(){
+  window.location.href = "raise-ticket.html";
+}
+
+function viewTickets(){
+  window.location.href = "view-tickets.html";
+}
+
+function logout(){
+  localStorage.removeItem("loggedInUser");
+  alert("You have logged out!");
+  window.location.href = "login.html";
+}
+</script>
+
+</body>
+</html>
